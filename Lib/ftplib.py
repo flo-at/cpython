@@ -709,11 +709,13 @@ else:
         '''
 
         def __init__(self, host='', user='', passwd='', acct='',
-                     *, context=None, timeout=_GLOBAL_DEFAULT_TIMEOUT,
+                     *, context=None, session_reuse=True,
+                     timeout=_GLOBAL_DEFAULT_TIMEOUT,
                      source_address=None, encoding='utf-8'):
             if context is None:
                 context = ssl._create_stdlib_context()
             self.context = context
+            self.session_reuse = session_reuse
             self._prot_p = False
             super().__init__(host, user, passwd, acct,
                              timeout, source_address, encoding=encoding)
@@ -770,8 +772,12 @@ else:
         def ntransfercmd(self, cmd, rest=None):
             conn, size = super().ntransfercmd(cmd, rest)
             if self._prot_p:
+                session = None
+                if isinstance(self.sock, ssl.SSLSocket) and self.session_reuse:
+                    session = self.sock.session
                 conn = self.context.wrap_socket(conn,
-                                                server_hostname=self.host)
+                                                server_hostname=self.host,
+                                                session=session)
             return conn, size
 
         def abort(self):

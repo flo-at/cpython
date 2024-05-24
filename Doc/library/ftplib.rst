@@ -446,7 +446,8 @@ FTP objects
 FTP_TLS objects
 ^^^^^^^^^^^^^^^
 
-.. class:: FTP_TLS(host='', user='', passwd='', acct='', *, context=None, \
+.. class:: FTP_TLS(host='', user='', passwd='', acct='', *, \
+                   context=None, session_reuse=False, \
                    timeout=None, source_address=None, encoding='utf-8')
 
    An :class:`FTP` subclass which adds TLS support to FTP as described in
@@ -480,6 +481,10 @@ FTP_TLS objects
       Please read :ref:`ssl-security` for best practices.
    :type context: :class:`ssl.SSLContext`
 
+   :param bool session_reuse:
+      If ``True``, reuse previously established SSL/TLS session for new data connections.
+      Defaults to ``False``.
+
    :param timeout:
       A timeout in seconds for blocking operations like :meth:`~FTP.connect`
       (default: the global default timeout setting).
@@ -510,6 +515,9 @@ FTP_TLS objects
 
    .. versionchanged:: 3.12
       The deprecated *keyfile* and *certfile* parameters have been removed.
+
+   .. versionchanged:: 3.14
+      Added the *session_reuse* parameter.
 
    Here's a sample session using the :class:`FTP_TLS` class::
 
